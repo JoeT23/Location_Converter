@@ -1,18 +1,11 @@
-# Add easting and northing function to the grid ref function
 from pyproj import Transformer
 
-# ----------------------------
-# Transformer (BNG → WGS84)
-# ----------------------------
 transformer = Transformer.from_crs(
     "EPSG:27700",
     "EPSG:4326",
     always_xy=True
 )
 
-# ----------------------------
-# GRID SYSTEM (simplified UK grid)
-# ----------------------------
 GRID = [
     ["SV","SW","SX","SY","SZ","TV","TW"],
     ["SQ","SR","SS","ST","SU","TQ","TR"],
@@ -30,9 +23,6 @@ GRID = [
 # GRID → EASTING/NORTHING
 # ----------------------------
 def gridref_to_en(gridref):
-    """
-    Convert UK grid reference (e.g. TQ300800) to easting/northing.
-    """
 
     gridref = gridref.replace(" ", "").upper()
 
@@ -64,3 +54,32 @@ def gridref_to_en(gridref):
 def easting_northing_to_latlon(easting, northing):
     lon, lat = transformer.transform(easting, northing)
     return lat, lon
+
+
+# ----------------------------
+# UNIFIED CONVERSION FUNCTION
+# ----------------------------
+def convert(mode, easting=None, northing=None, gridref=None):
+
+    if mode == "Easting / Northing":
+
+        if easting is None or northing is None:
+            return "Missing input values"
+
+        lat, lon = easting_northing_to_latlon(float(easting), float(northing))
+        return f"Latitude: {lat:.6f}, Longitude: {lon:.6f}"
+
+    elif mode == "Grid Reference":
+
+        result = gridref_to_en(gridref)
+
+        if result is None:
+            return "Invalid grid reference"
+
+        e, n = result
+        lat, lon = easting_northing_to_latlon(e, n)
+
+        return f"Latitude: {lat:.6f}, Longitude: {lon:.6f}"
+
+    else:
+        return "Invalid mode"
