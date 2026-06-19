@@ -1,5 +1,8 @@
 from pyproj import Transformer
 import folium
+# Add packages for cv export
+import pandas as pd
+import tempfile
 
 transformer = Transformer.from_crs(
     "EPSG:27700",
@@ -105,3 +108,28 @@ def generate_map(lat, lon):
     ).add_to(m)
 
     return m._repr_html_()
+
+# ----------------------------
+# CSV Export
+# ----------------------------
+
+def export_csv(mode, easting=None, northing=None, gridref=None, result_text=None):
+    """
+    Export conversion result to CSV file.
+    """
+
+    data = {
+        "mode": mode,
+        "input_easting": easting,
+        "input_northing": northing,
+        "input_gridref": gridref,
+        "result": result_text
+    }
+
+    df = pd.DataFrame([data])
+
+    tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".csv")
+    df.to_csv(tmp.name, index=False)
+    tmp.close()
+
+    return tmp.name
