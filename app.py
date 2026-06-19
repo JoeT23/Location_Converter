@@ -1,20 +1,19 @@
 import gradio as gr
+from converter import easting_northing_to_latlon
 
 # ----------------------------
-# UI ONLY for the location conversion section of the app
+# UI
 # ----------------------------
 
 with gr.Blocks() as demo:
 
-    gr.Markdown("# UK Location Converter")
+    gr.Markdown("# 🇬🇧 UK National Grid Converter")
 
     with gr.Tabs():
 
-        # HOME TAB
         with gr.Tab("Home"):
             gr.Markdown("Welcome to the UK National Grid Converter")
 
-        # CONVERTER TAB
         with gr.Tab("Converter"):
 
             mode = gr.Radio(
@@ -29,6 +28,15 @@ with gr.Blocks() as demo:
             btn = gr.Button("Convert")
 
             output_text = gr.Textbox(label="Results")
-            output_map = gr.HTML(label="Map Output")
+
+            def convert_ui(easting, northing):
+                lat, lon = easting_northing_to_latlon(easting, northing)
+                return f"Latitude: {lat:.6f}, Longitude: {lon:.6f}"
+
+            btn.click(
+                fn=convert_ui,
+                inputs=[easting, northing],
+                outputs=output_text
+            )
 
 demo.launch()
