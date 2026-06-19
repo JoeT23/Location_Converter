@@ -65,29 +65,42 @@ def easting_northing_to_latlon(easting, northing):
 # ----------------------------
 def convert(mode, easting=None, northing=None, gridref=None):
 
-    if mode == "Easting / Northing":
+    try:
 
-        if easting is None or northing is None:
-            return "Missing input values"
+        if mode == "Easting / Northing":
 
-        lat, lon = easting_northing_to_latlon(float(easting), float(northing))
-        return f"Latitude: {lat:.6f}, Longitude: {lon:.6f}"
+            if easting is None or northing is None:
+                return "Error: Please enter both Easting and Northing values."
 
-    elif mode == "Grid Reference":
+            try:
+                easting = float(easting)
+                northing = float(northing)
+            except ValueError:
+                return "Error: Easting and Northing must be numbers."
 
-        result = gridref_to_en(gridref)
+            lat, lon = easting_northing_to_latlon(easting, northing)
+            return f"Latitude: {lat:.6f}, Longitude: {lon:.6f}"
 
-        if result is None:
-            return "Invalid grid reference"
+        elif mode == "Grid Reference":
 
-        e, n = result
-        lat, lon = easting_northing_to_latlon(e, n)
+            if not gridref or len(gridref.strip()) < 4:
+                return "Error: Invalid grid reference format."
 
-        return f"Latitude: {lat:.6f}, Longitude: {lon:.6f}"
+            result = gridref_to_en(gridref)
 
-    else:
-        return "Invalid mode"
+            if result is None:
+                return "Error: Grid reference not recognised."
 
+            e, n = result
+            lat, lon = easting_northing_to_latlon(e, n)
+
+            return f"Latitude: {lat:.6f}, Longitude: {lon:.6f}"
+
+        else:
+            return "Error: Invalid conversion mode."
+
+    except Exception as e:
+        return f"Unexpected error: {str(e)}"
 
 # ----------------------------
 # Folium MAP
