@@ -83,3 +83,24 @@ def convert(mode, easting=None, northing=None, gridref=None):
 
     else:
         return "Invalid mode"
+
+
+# ----------------------------
+# Folium MAP
+# ----------------------------
+
+import folium
+
+def generate_map(lat, lon):
+    """
+    Generate an interactive Folium map centered on given coordinates.
+    """
+
+    m = folium.Map(location=[lat, lon], zoom_start=12)
+
+    folium.Marker(
+        [lat, lon],
+        popup="Converted Location"
+    ).add_to(m)
+
+    return m._repr_html_()
