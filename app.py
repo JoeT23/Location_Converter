@@ -32,27 +32,29 @@ with gr.Blocks() as demo:
             # ---------------- CONVERT FUNCTION ----------------
             def run_convert(mode, easting, northing, gridref):
 
-                result = convert(mode, easting, northing, gridref)
+    result = convert(mode, easting, northing, gridref)
 
-                if "Latitude" not in result:
-                    return result, "", None
+    # If error message → don't generate map
+    if not result.startswith("Latitude"):
+        return result, "", None
 
-                try:
-                    parts = result.split(",")
-                    lat = float(parts[0].split(":")[1])
-                    lon = float(parts[1].split(":")[1])
-                except:
-                    return result, "", None
+    parts = result.split(",")
 
-                map_html = generate_map(lat, lon)
+    try:
+        lat = float(parts[0].split(":")[1])
+        lon = float(parts[1].split(":")[1])
+    except:
+        return result, "", None
 
-                return result, map_html, {
-                    "mode": mode,
-                    "easting": easting,
-                    "northing": northing,
-                    "gridref": gridref,
-                    "result": result
-                }
+    map_html = generate_map(lat, lon)
+
+    return result, map_html, {
+        "mode": mode,
+        "easting": easting,
+        "northing": northing,
+        "gridref": gridref,
+        "result": result
+    }
 
             btn.click(
                 fn=run_convert,
