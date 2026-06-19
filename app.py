@@ -1,9 +1,5 @@
 import gradio as gr
-from converter import easting_northing_to_latlon
-
-# ----------------------------
-# UI
-# ----------------------------
+from converter import easting_northing_to_latlon, gridref_to_en
 
 with gr.Blocks() as demo:
 
@@ -26,16 +22,33 @@ with gr.Blocks() as demo:
             gridref = gr.Textbox(label="Grid Reference")
 
             btn = gr.Button("Convert")
-
             output_text = gr.Textbox(label="Results")
 
-            def convert_ui(easting, northing):
-                lat, lon = easting_northing_to_latlon(easting, northing)
-                return f"Latitude: {lat:.6f}, Longitude: {lon:.6f}"
+            def convert_ui(mode, easting, northing, gridref):
+
+                if mode == "Easting / Northing":
+
+                    if easting is None or northing is None:
+                        return "Please enter values."
+
+                    lat, lon = easting_northing_to_latlon(float(easting), float(northing))
+                    return f"Latitude: {lat:.6f}, Longitude: {lon:.6f}"
+
+                else:
+
+                    result = gridref_to_en(gridref)
+
+                    if result is None:
+                        return "Invalid grid reference"
+
+                    e, n = result
+                    lat, lon = easting_northing_to_latlon(e, n)
+
+                    return f"Latitude: {lat:.6f}, Longitude: {lon:.6f}"
 
             btn.click(
                 fn=convert_ui,
-                inputs=[easting, northing],
+                inputs=[mode, easting, northing, gridref],
                 outputs=output_text
             )
 
