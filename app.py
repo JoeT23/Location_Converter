@@ -10,10 +10,10 @@ with gr.Blocks() as demo:
 
     with gr.Tabs():
 
-        with gr.Tab("🏠 Home"):
+        with gr.Tab("Home"):
             gr.Markdown("UK National Grid Converter with CSV export functionality")
 
-        with gr.Tab("🗺 Converter"):
+        with gr.Tab("Converter"):
 
             mode = gr.Radio(
                 ["Easting / Northing", "Grid Reference"],
@@ -32,29 +32,29 @@ with gr.Blocks() as demo:
             # ---------------- CONVERT FUNCTION ----------------
             def run_convert(mode, easting, northing, gridref):
 
-    result = convert(mode, easting, northing, gridref)
+                result = convert(mode, easting, northing, gridref)
 
-    # If error message → don't generate map
-    if not result.startswith("Latitude"):
-        return result, "", None
+                # If error message → don't generate map
+                if not result.startswith("Latitude"):
+                    return result, "", None
 
-    parts = result.split(",")
+                parts = result.split(",")
 
-    try:
-        lat = float(parts[0].split(":")[1])
-        lon = float(parts[1].split(":")[1])
-    except:
-        return result, "", None
+                try:
+                    lat = float(parts[0].split(":")[1])
+                    lon = float(parts[1].split(":")[1])
+                except:
+                    return result, "", None
 
-    map_html = generate_map(lat, lon)
+                map_html = generate_map(lat, lon)
 
-    return result, map_html, {
-        "mode": mode,
-        "easting": easting,
-        "northing": northing,
-        "gridref": gridref,
-        "result": result
-    }
+                return result, map_html, {
+                    "mode": mode,
+                    "easting": easting,
+                    "northing": northing,
+                    "gridref": gridref,
+                    "result": result
+                }
 
             btn.click(
                 fn=run_convert,
@@ -63,7 +63,7 @@ with gr.Blocks() as demo:
             )
 
         # ---------------- EXPORT TAB ----------------
-        with gr.Tab("⬇ Export CSV"):
+        with gr.Tab("Export CSV"):
 
             export_btn = gr.Button("Export Last Result")
             csv_file = gr.File(label="Download CSV")
