@@ -21,7 +21,6 @@ A Gradio application for converting UK National Grid coordinates, grid reference
 - [x] Testing
 - [x] CI/CD
 - [x] Documentation
-- [ ] 
 
 ## Stage 1 – Project Setup
 
