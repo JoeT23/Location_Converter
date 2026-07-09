@@ -77,6 +77,10 @@ A Gradio application for converting UK National Grid coordinates, grid reference
 - Outcome: The application is fully documented and can be easily installed, used, and maintained.
 
 
+## Application Screenshot
+
+![GB UK National Grid Converter](screenshots/Conceptualisation.png)
+
 
 ## Evaluation
 
